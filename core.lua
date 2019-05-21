@@ -7,11 +7,10 @@ local LRI = LibStub:GetLibrary("LibRealmInfo");
 
 -- default config settings
 local QuickLink_defaultPages = {
-    { name = "Armory", url = "http://worldofwarcraft.com/{LANGUAGE}/character/{REALM}/{NAME}", enabled = true },
-    { name = "Old Armory", url = "http://{REGION}.battle.net/wow/{LANGUAGE}/character/{REALM}/{NAME}/advanced", enabled = false },
-    { name = "Ask Mr. Robot", url = "http://www.askmrrobot.com/wow/gear/{REGION}/{REALM}/{NAME}", enabled = true },
-    { name = "Guildox", url = "http://guildox.com/toon/{REGION}/{REALM}/{NAME}", enabled = true },
-    { name = "WOW Progress", url = "http://www.wowprogress.com/character/{REGION}/{REALM}/{NAME}", enabled = true },
+    { name = "Armory", url = "http://worldofwarcraft.com/en-gb/character/{REALM}/{NAME}", enabled = true },
+    { name = "WoWProgress", url = "http://www.wowprogress.com/character/{REGION}/{REALM}/{NAME}", enabled = true },
+    { name = "Raider.IO", url = "https://raider.io/characters/{REGION}/{REALM}/{NAME}", enabled = true },
+    { name = "Warcraft Logs", url = "https://www.warcraftlogs.com/character/{REGION}/{REALM}/{NAME}", enabled = true },
 }
 
 StaticPopupDialogs["QUICKLINK_DELETE"] = {
@@ -61,10 +60,10 @@ local function getUrl(urltemplate, name, server)
   realm = realm:gsub("'","");
   realm = realm:gsub(" ","-");
 
-  url,_ = string.gsub(urltemplate, "{REGION}", region)
+  url,_ = string.gsub(urltemplate, "{REGION}",  string.lower(region))
   url,_ = string.gsub(url, "{LANGUAGE}", L["LANGUAGE"])
-  url,_ = string.gsub(url, "{REALM}", realm)
-  url,_ = string.gsub(url, "{NAME}", name)
+  url,_ = string.gsub(url, "{REALM}",  string.lower(realm))
+  url,_ = string.gsub(url, "{NAME}", string.lower(name))
   if url then
     url = urlEscape(url);
   end
@@ -117,7 +116,7 @@ function GenConfig()
           desc = L['OPTION_HELP_NAME'],
           set = function(info, val)
             QuickLinkPages[i].name = val
-            ConfigChange()
+--            ConfigChange()
           end,
           get = function() return table:get(QuickLinkPages[i], "name", "") end,
         },
@@ -128,7 +127,7 @@ function GenConfig()
           desc = L['OPTION_HELP_URL'],
           set = function(info, val)
             QuickLinkPages[i].url = val
-            ConfigChange()
+--            ConfigChange()
           end,
           get = function() return table:get(QuickLinkPages[i], "url", "") end,
           width = "full",
@@ -141,7 +140,7 @@ function GenConfig()
           desc = L['OPTION_HELP_ENABLED'],
           set = function(info, val)
             QuickLinkPages[i].enabled = val
-            ConfigChange()
+--            ConfigChange()
           end,
           get = function() return table:get(QuickLinkPages[i], "enabled", false) end
         },
@@ -153,7 +152,7 @@ function GenConfig()
             StaticPopupDialogs["QUICKLINK_DELETE"].text = L['POPUP_DELETECONFIRMATION_QUESTION'](QuickLinkPages[i].name)
             StaticPopupDialogs["QUICKLINK_DELETE"].OnAccept = function()
               QuickLinkPages[i] = nil
-              ConfigChange()
+--              ConfigChange()
             end
             StaticPopup_Show ("QUICKLINK_DELETE")
           end,
@@ -219,12 +218,12 @@ function GenConfig()
 end
 
 ------------------------------------------------------------------------
-function ConfigChange()
-  QuickLink_UNIT_POPUP = QuickLink:GetModule("QuickLink_UNIT_POPUP")
-  if QuickLink_UNIT_POPUP and QuickLink_UNIT_POPUP:IsEnabled() then
-    QuickLink_UNIT_POPUP:updateContextMenu()
-  end
-end
+--function ConfigChange()
+--  QuickLink_UNIT_POPUP = QuickLink:GetModule("QuickLink_UNIT_POPUP")
+--  if QuickLink_UNIT_POPUP and QuickLink_UNIT_POPUP:IsEnabled() then
+--    QuickLink_UNIT_POPUP:updateContextMenu()
+--  end
+--end
 
 function QuickLink:OnInitialize()
   if not QuickLinkPages then
@@ -234,10 +233,10 @@ function QuickLink:OnInitialize()
   AceConfig:RegisterOptionsTable("QuickLink", GenConfig)
   QuickLink.optionsFrame = LibStub("AceConfigDialog-3.0"):AddToBlizOptions("QuickLink", "QuickLink")
 
-  QuickLink:EnableModule("QuickLink_UNIT_POPUP")
+  --QuickLink:EnableModule("QuickLink_UNIT_POPUP")
   QuickLink:EnableModule("QuickLink_LFG")
   QuickLink:EnableModule("QuickLink_BNET")
-  ConfigChange()
+--  ConfigChange()
 
   SLASH_QUICKLINK1 = "/quicklink"
   SlashCmdList["QUICKLINK"] = function(msg)
